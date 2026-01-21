@@ -3,7 +3,9 @@ version: '3.8'
 services:
   # Master 노드
   master:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.master
     container_name: power-control-master
     environment:
       - NODE_MODE=master
@@ -18,7 +20,9 @@ services:
 
   # Slave 노드 1 - 태양광 발전소
   slave1:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.slave
     container_name: power-control-slave1
     environment:
       - NODE_MODE=slave
@@ -26,7 +30,9 @@ services:
       - MASTER_PORT=5020
       - SLAVE_ID=1
       - DEVICE_TYPE=solar
-      - UPDATE_INTERVAL=5000
+      - UPDATE_INTERVAL=3000
+    ports:
+      - "3001:3001"
     depends_on:
       - master
     restart: unless-stopped
@@ -35,7 +41,9 @@ services:
 
   # Slave 노드 2 - 풍력 발전소
   slave2:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.slave
     container_name: power-control-slave2
     environment:
       - NODE_MODE=slave
@@ -43,7 +51,9 @@ services:
       - MASTER_PORT=5020
       - SLAVE_ID=2
       - DEVICE_TYPE=wind
-      - UPDATE_INTERVAL=5000
+      - UPDATE_INTERVAL=3000
+    ports:
+      - "3002:3002"
     depends_on:
       - master
     restart: unless-stopped
@@ -52,7 +62,9 @@ services:
 
   # Slave 노드 3 - BMS 배터리
   slave3:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.slave
     container_name: power-control-slave3
     environment:
       - NODE_MODE=slave
@@ -60,7 +72,9 @@ services:
       - MASTER_PORT=5020
       - SLAVE_ID=3
       - DEVICE_TYPE=bms
-      - UPDATE_INTERVAL=5000
+      - UPDATE_INTERVAL=3000
+    ports:
+      - "3003:3003"
     depends_on:
       - master
     restart: unless-stopped

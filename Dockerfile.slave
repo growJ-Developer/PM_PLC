@@ -1,0 +1,20 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# 패키지 파일 복사 및 의존성 설치
+COPY package*.json ./
+RUN npm install --production
+
+# 소스 코드 복사
+COPY src ./src
+COPY public/slave ./public/slave
+
+# Slave 환경변수 기본값 (docker-compose에서 오버라이드)
+ENV NODE_MODE=slave
+ENV MASTER_HOST=master
+ENV MASTER_PORT=5020
+ENV UPDATE_INTERVAL=3000
+
+# 애플리케이션 실행
+CMD ["node", "src/index.js"]

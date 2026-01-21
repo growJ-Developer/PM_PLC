@@ -60,6 +60,27 @@ app.get('/api/data', (req, res) => {
   }
 });
 
+// Slave 전원 제어 API
+app.post('/api/slave/toggle', (req, res) => {
+  const { slaveId, enable, password } = req.body;
+  
+  // 비밀번호 확인
+  if (password !== 'admin123') {
+    return res.json({ success: false, error: '비밀번호가 올바르지 않습니다.' });
+  }
+  
+  if (!node || !node.toggleSlavePower) {
+    return res.json({ success: false, error: 'Master 노드가 실행 중이지 않습니다.' });
+  }
+  
+  try {
+    node.toggleSlavePower(slaveId, enable);
+    res.json({ success: true, message: `Slave ${slaveId} ${enable ? '활성화' : '비활성화'} 완료` });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
+
 // 노드 시작
 async function startNode() {
   try {

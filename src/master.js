@@ -8,8 +8,11 @@ class MasterNode {
     // 슬레이브 데이터 저장소 (슬레이브 ID별)
     this.slaveData = {};
     
-    // Modbus 레지스터 (최대 100개 슬레이브 지원, 각 슬레이브당 10개 레지스터)
-    this.holdingRegisters = new Array(1000).fill(0);
+    // 슬레이브 전원 상태 (ID별)
+    this.slavePowerStatus = {};
+    
+    // Modbus 레지스터 (최대 100개 슬레이브 지원, 각 슬레이브당 20개 레지스터)
+    this.holdingRegisters = new Array(2000).fill(0);
     
     // TCP 서버
     this.tcpServer = null;
@@ -110,15 +113,26 @@ class MasterNode {
   }
 
   parseSlaveData(unitID, startAddr, values) {
-    const baseAddr = unitID * 10;
+    const baseAddr = unitID * 20; // 각 슬레이브는 20개 레지스터 사용
     
-    if (startAddr >= baseAddr && startAddr < baseAddr + 10) {
+    // Slave가 전원 OFF 상태면 데이터 무시
+    if (this.slavePowerStatus[unitID] === false) {
+      return;
+    }
+    
+    if (startAddr >= baseAddr && startAddr < baseAddr + 20) {
       const deviceType = this.holdingRegisters[baseAddr] || 0;
       const powerHigh = this.holdingRegisters[baseAddr + 1] || 0;
       const powerLow = this.holdingRegisters[baseAddr + 2] || 0;
       const status = this.holdingRegisters[baseAddr + 3] || 0;
+      const ambientTemp = this.holdingRegisters[baseAddr + 4] || 0;
+      const internalTemp = this.holdingRegisters[baseAddr + 5] || 0;
+      const runtimeHigh = this.holdingRegisters[baseAddr + 6] || 0;
+      const runtimeLow = this.holdingRegisters[baseAddr + 7] || 0;
       
+      // 32비트 값 복원
       const power = (powerHigh << 16) | powerLow;
+      const runtime = (runtimeHigh << 16) | runtimeLow;
       
       const deviceTypeMap = {
         1: 'Solar',
@@ -129,8 +143,11 @@ class MasterNode {
       this.slaveData[unitID] = {
         slaveId: unitID,
         deviceType: deviceTypeMap[deviceType] || 'Unknown',
-        power: power / 100,
-        status: status === 1 ? 'Online' : 'Offline',
+        power: power / 100, // 소수점 2자리 복원
+        status: (this.slavePowerStatus[unitID] !== false && status === 1) ? 'Online' : 'Offline',
+        ambientTemp: ambientTemp / 10, // 소수점 1자리
+        internalTemp: internalTemp / 10,
+        runtime: runtime, // 초 단위
         lastUpdate: new Date().toISOString()
       };
 
@@ -181,6 +198,25 @@ class MasterNode {
       slaves: Object.values(this.slaveData),
       statistics: this.calculateStatistics()
     };
+  }
+
+  // Slave 전원 제어
+  toggleSlavePower(slaveId, enable) {
+    this.slavePowerStatus[slaveId] = enable;
+    
+    // Slave 데이터 업데이트
+    if (this.slaveData[slaveId]) {
+      this.slaveData[slaveId].status = enable ? 'Online' : 'Offline';
+      this.broadcastData();
+    }
+    
+    console.log(`[Master] Slave ${slaveId} 전원 ${enable ? 'ON' : 'OFF'}`);
+    return true;
+  }
+
+  // Slave 상태 확인
+  getSlavePowerStatus(slaveId) {
+    return this.slavePowerStatus[slaveId] !== false;
   }
 
   async start() {

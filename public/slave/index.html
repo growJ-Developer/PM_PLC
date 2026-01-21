@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slave 노드 - 상세 정보</title>
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #673ab7 0%, #512da8 100%);
+        }
+        
+        .info-card {
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: white;
+        }
+        
+        .stat-value {
+            font-size: 48px;
+            font-weight: 500;
+            color: #673ab7;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #757575;
+            text-transform: uppercase;
+        }
+        
+        .data-row {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .data-row:last-child {
+            border-bottom: none;
+        }
+        
+        .data-icon {
+            margin-right: 15px;
+            color: #673ab7;
+        }
+        
+        .data-label {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .data-value {
+            font-size: 20px;
+            font-weight: 500;
+            color: #424242;
+        }
+        
+        .status-online {
+            color: #4caf50;
+        }
+        
+        .status-offline {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo center">
+                <i class="material-icons left">device_hub</i>
+                Slave 노드 상세정보
+            </a>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 20px;">
+        <!-- 기본 정보 -->
+        <div class="row">
+            <div class="col s12">
+                <div class="info-card">
+                    <h5>
+                        <i class="material-icons left">info</i>
+                        기본 정보
+                    </h5>
+                    <div class="data-row">
+                        <i class="material-icons data-icon">tag</i>
+                        <span class="data-label">Slave ID</span>
+                        <span class="data-value" id="slaveId">-</span>
+                    </div>
+                    <div class="data-row">
+                        <i class="material-icons data-icon">category</i>
+                        <span class="data-label">장치 타입</span>
+                        <span class="data-value" id="deviceType">-</span>
+                    </div>
+                    <div class="data-row">
+                        <i class="material-icons data-icon">link</i>
+                        <span class="data-label">Master 서버</span>
+                        <span class="data-value" id="masterInfo">-</span>
+                    </div>
+                    <div class="data-row">
+                        <i class="material-icons data-icon">circle</i>
+                        <span class="data-label">연결 상태</span>
+                        <span class="data-value" id="connectionStatus">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 실시간 데이터 -->
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="info-card">
+                    <div class="center-align">
+                        <i class="material-icons" style="font-size: 64px; color: #673ab7;">power</i>
+                        <div class="stat-value" id="power">0.00</div>
+                        <div class="stat-label" id="powerUnit">kW</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m6">
+                <div class="info-card">
+                    <div class="center-align">
+                        <i class="material-icons" style="font-size: 64px; color: #ff9800;">schedule</i>
+                        <div class="stat-value" id="runtime">0h 0m</div>
+                        <div class="stat-label">구동 시간</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 온도 정보 -->
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="info-card">
+                    <div class="center-align">
+                        <i class="material-icons" style="font-size: 64px; color: #2196f3;">wb_sunny</i>
+                        <div class="stat-value" id="ambientTemp">-</div>
+                        <div class="stat-label">외기 온도</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m6">
+                <div class="info-card">
+                    <div class="center-align">
+                        <i class="material-icons" style="font-size: 64px; color: #f44336;">thermostat</i>
+                        <div class="stat-value" id="internalTemp">-</div>
+                        <div class="stat-label">내부 온도</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 업타임 정보 -->
+        <div class="row">
+            <div class="col s12">
+                <div class="info-card">
+                    <h5>
+                        <i class="material-icons left">timeline</i>
+                        시스템 정보
+                    </h5>
+                    <div class="data-row">
+                        <i class="material-icons data-icon">access_time</i>
+                        <span class="data-label">업타임</span>
+                        <span class="data-value" id="uptime">-</span>
+                    </div>
+                    <div class="data-row">
+                        <i class="material-icons data-icon">update</i>
+                        <span class="data-label">마지막 업데이트</span>
+                        <span class="data-value" id="lastUpdate">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        function formatRuntime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            return `${hours}h ${minutes}m`;
+        }
+
+        function updateData() {
+            fetch('/api/status')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('slaveId').textContent = `Slave ${data.slaveId}`;
+                    document.getElementById('deviceType').textContent = data.deviceType.toUpperCase();
+                    document.getElementById('masterInfo').textContent = `${data.masterHost}:${data.masterPort}`;
+                    
+                    const statusEl = document.getElementById('connectionStatus');
+                    if (data.connected) {
+                        statusEl.textContent = '연결됨';
+                        statusEl.className = 'data-value status-online';
+                    } else {
+                        statusEl.textContent = '연결 끊김';
+                        statusEl.className = 'data-value status-offline';
+                    }
+                    
+                    const unit = data.deviceType.toLowerCase() === 'bms' ? '%' : 'kW';
+                    document.getElementById('power').textContent = data.data.power.toFixed(2);
+                    document.getElementById('powerUnit').textContent = unit;
+                    
+                    document.getElementById('ambientTemp').textContent = data.data.ambientTemp.toFixed(1) + '°C';
+                    document.getElementById('internalTemp').textContent = data.data.internalTemp.toFixed(1) + '°C';
+                    document.getElementById('runtime').textContent = formatRuntime(data.data.runtime);
+                    document.getElementById('uptime').textContent = formatRuntime(data.uptime);
+                    document.getElementById('lastUpdate').textContent = new Date(data.timestamp).toLocaleString('ko-KR');
+                })
+                .catch(err => {
+                    console.error('데이터 로드 실패:', err);
+                });
+        }
+
+        // 초기 로드
+        updateData();
+        
+        // 3초마다 업데이트
+        setInterval(updateData, 3000);
+    </script>
+</body>
+</html>
