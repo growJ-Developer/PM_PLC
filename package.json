@@ -1,0 +1,29 @@
+{
+  "name": "power-control-system",
+  "version": "1.0.0",
+  "description": "전력제어시스템 - Modbus 기반 Master/Slave 모니터링",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "master": "NODE_MODE=master node src/index.js",
+    "slave": "NODE_MODE=slave node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "modbus",
+    "power-control",
+    "scada"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "modbus-serial": "^8.0.14",
+    "ws": "^8.14.2",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
