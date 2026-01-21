@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Master 노드
+  master:
+    build: .
+    container_name: power-control-master
+    environment:
+      - NODE_MODE=master
+      - PORT=3000
+      - MODBUS_PORT=502
+    ports:
+      - "3000:3000"
+      - "502:502"
+    restart: unless-stopped
+    networks:
+      - power-control-network
+
+  # Slave 노드 1 - 태양광 발전소
+  slave1:
+    build: .
+    container_name: power-control-slave1
+    environment:
+      - NODE_MODE=slave
+      - MASTER_HOST=master
+      - MASTER_PORT=502
+      - SLAVE_ID=1
+      - DEVICE_TYPE=solar
+      - UPDATE_INTERVAL=5000
+    depends_on:
+      - master
+    restart: unless-stopped
+    networks:
+      - power-control-network
+
+  # Slave 노드 2 - 풍력 발전소
+  slave2:
+    build: .
+    container_name: power-control-slave2
+    environment:
+      - NODE_MODE=slave
+      - MASTER_HOST=master
+      - MASTER_PORT=502
+      - SLAVE_ID=2
+      - DEVICE_TYPE=wind
+      - UPDATE_INTERVAL=5000
+    depends_on:
+      - master
+    restart: unless-stopped
+    networks:
+      - power-control-network
+
+  # Slave 노드 3 - BMS 배터리
+  slave3:
+    build: .
+    container_name: power-control-slave3
+    environment:
+      - NODE_MODE=slave
+      - MASTER_HOST=master
+      - MASTER_PORT=502
+      - SLAVE_ID=3
+      - DEVICE_TYPE=bms
+      - UPDATE_INTERVAL=5000
+    depends_on:
+      - master
+    restart: unless-stopped
+    networks:
+      - power-control-network
+
+networks:
+  power-control-network:
+    driver: bridge
