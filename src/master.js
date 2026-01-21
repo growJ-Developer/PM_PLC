@@ -1,10 +1,9 @@
-const ModbusRTU = require('modbus-serial');
+const net = require('net');
 
 class MasterNode {
   constructor(broadcastCallback) {
     this.broadcastCallback = broadcastCallback;
     this.modbusPort = process.env.MODBUS_PORT || 502;
-    this.server = new ModbusRTU.ServerTCP(null, { host: '0.0.0.0', port: this.modbusPort });
     
     // 슬레이브 데이터 저장소 (슬레이브 ID별)
     this.slaveData = {};
@@ -12,50 +11,106 @@ class MasterNode {
     // Modbus 레지스터 (최대 100개 슬레이브 지원, 각 슬레이브당 10개 레지스터)
     this.holdingRegisters = new Array(1000).fill(0);
     
-    this.setupModbusServer();
+    // TCP 서버
+    this.tcpServer = null;
   }
 
-  setupModbusServer() {
-    const self = this;
-    
-    // Holding Register 읽기 처리
-    this.server.on('readHoldingRegisters', (addr, length, unitID) => {
-      console.log(`[Modbus] Read request from Slave ${unitID}: addr=${addr}, length=${length}`);
-      return this.holdingRegisters.slice(addr, addr + length);
-    });
+  // Modbus TCP 패킷 파싱
+  parseModbusRequest(buffer) {
+    if (buffer.length < 8) return null;
 
-    // Holding Register 쓰기 처리
-    this.server.on('writeRegisters', (addr, values, unitID) => {
-      console.log(`[Modbus] Write request from Slave ${unitID}: addr=${addr}, values=${values}`);
-      
-      // 레지스터에 저장
-      for (let i = 0; i < values.length; i++) {
-        this.holdingRegisters[addr + i] = values[i];
-      }
+    const transactionId = buffer.readUInt16BE(0);
+    const protocolId = buffer.readUInt16BE(2);
+    const length = buffer.readUInt16BE(4);
+    const unitId = buffer.readUInt8(6);
+    const functionCode = buffer.readUInt8(7);
 
-      // 슬레이브 데이터 파싱 및 저장
-      this.parseSlaveData(unitID, addr, values);
-    });
+    return {
+      transactionId,
+      protocolId,
+      length,
+      unitId,
+      functionCode,
+      data: buffer.slice(8)
+    };
+  }
 
-    // Single Register 쓰기 처리
-    this.server.on('writeSingleRegister', (addr, value, unitID) => {
-      console.log(`[Modbus] Write single register from Slave ${unitID}: addr=${addr}, value=${value}`);
-      this.holdingRegisters[addr] = value;
-      this.parseSlaveData(unitID, addr, [value]);
-    });
+  // Modbus TCP 응답 생성
+  createModbusResponse(transactionId, unitId, functionCode, data) {
+    const length = data.length + 2; // unit ID + function code + data
+    const buffer = Buffer.alloc(6 + length);
+
+    buffer.writeUInt16BE(transactionId, 0);
+    buffer.writeUInt16BE(0, 2); // Protocol ID
+    buffer.writeUInt16BE(length, 4);
+    buffer.writeUInt8(unitId, 6);
+    buffer.writeUInt8(functionCode, 7);
+    data.copy(buffer, 8);
+
+    return buffer;
+  }
+
+  // Function Code 03: Read Holding Registers
+  handleReadHoldingRegisters(request) {
+    const startAddr = request.data.readUInt16BE(0);
+    const quantity = request.data.readUInt16BE(2);
+
+    console.log(`[Modbus] Read Holding Registers from Slave ${request.unitId}: addr=${startAddr}, count=${quantity}`);
+
+    const byteCount = quantity * 2;
+    const responseData = Buffer.alloc(1 + byteCount);
+    responseData.writeUInt8(byteCount, 0);
+
+    for (let i = 0; i < quantity; i++) {
+      const value = this.holdingRegisters[startAddr + i] || 0;
+      responseData.writeUInt16BE(value, 1 + i * 2);
+    }
+
+    return this.createModbusResponse(request.transactionId, request.unitId, 0x03, responseData);
+  }
+
+  // Function Code 16: Write Multiple Registers
+  handleWriteMultipleRegisters(request) {
+    const startAddr = request.data.readUInt16BE(0);
+    const quantity = request.data.readUInt16BE(2);
+    const byteCount = request.data.readUInt8(4);
+
+    const values = [];
+    for (let i = 0; i < quantity; i++) {
+      const value = request.data.readUInt16BE(5 + i * 2);
+      this.holdingRegisters[startAddr + i] = value;
+      values.push(value);
+    }
+
+    console.log(`[Modbus] Write Multiple Registers from Slave ${request.unitId}: addr=${startAddr}, values=[${values.join(', ')}]`);
+
+    // 슬레이브 데이터 파싱
+    this.parseSlaveData(request.unitId, startAddr, values);
+
+    const responseData = Buffer.alloc(4);
+    responseData.writeUInt16BE(startAddr, 0);
+    responseData.writeUInt16BE(quantity, 2);
+
+    return this.createModbusResponse(request.transactionId, request.unitId, 0x10, responseData);
+  }
+
+  // Function Code 06: Write Single Register
+  handleWriteSingleRegister(request) {
+    const addr = request.data.readUInt16BE(0);
+    const value = request.data.readUInt16BE(2);
+
+    this.holdingRegisters[addr] = value;
+
+    console.log(`[Modbus] Write Single Register from Slave ${request.unitId}: addr=${addr}, value=${value}`);
+
+    // 슬레이브 데이터 파싱
+    this.parseSlaveData(request.unitId, addr, [value]);
+
+    return this.createModbusResponse(request.transactionId, request.unitId, 0x06, request.data);
   }
 
   parseSlaveData(unitID, startAddr, values) {
-    // 슬레이브가 보낸 데이터 파싱
-    // 레지스터 구조:
-    // 0: 장치 타입 (1=Solar, 2=Wind, 3=BMS)
-    // 1: 발전량/배터리량 (상위 16비트)
-    // 2: 발전량/배터리량 (하위 16비트)
-    // 3: 상태 (1=정상, 0=오류)
-    // 4: 타임스탬프 (상위)
-    // 5: 타임스탬프 (하위)
-
-    const baseAddr = unitID * 10; // 각 슬레이브는 10개 레지스터 사용
+    const baseAddr = unitID * 10;
     
     if (startAddr >= baseAddr && startAddr < baseAddr + 10) {
       const deviceType = this.holdingRegisters[baseAddr] || 0;
@@ -63,7 +118,6 @@ class MasterNode {
       const powerLow = this.holdingRegisters[baseAddr + 2] || 0;
       const status = this.holdingRegisters[baseAddr + 3] || 0;
       
-      // 32비트 값 복원
       const power = (powerHigh << 16) | powerLow;
       
       const deviceTypeMap = {
@@ -75,14 +129,12 @@ class MasterNode {
       this.slaveData[unitID] = {
         slaveId: unitID,
         deviceType: deviceTypeMap[deviceType] || 'Unknown',
-        power: power / 100, // 소수점 2자리 복원
+        power: power / 100,
         status: status === 1 ? 'Online' : 'Offline',
         lastUpdate: new Date().toISOString()
       };
 
       console.log(`[Data] Slave ${unitID} 업데이트:`, this.slaveData[unitID]);
-
-      // 웹소켓으로 실시간 브로드캐스트
       this.broadcastData();
     }
   }
@@ -132,28 +184,82 @@ class MasterNode {
   }
 
   async start() {
+    const self = this;
+    
     return new Promise((resolve, reject) => {
-      this.server.on('socketError', (err) => {
-        console.error('[Modbus] Socket 에러:', err);
-      });
+      try {
+        this.tcpServer = net.createServer((socket) => {
+          console.log(`[Modbus] 새로운 연결: ${socket.remoteAddress}:${socket.remotePort}`);
 
-      console.log(`[Master] Modbus TCP 서버 시작: 포트 ${this.modbusPort}`);
-      console.log('[Master] 슬레이브 연결 대기 중...\n');
-      
-      // 주기적으로 통계 업데이트
-      this.statsInterval = setInterval(() => {
-        if (Object.keys(this.slaveData).length > 0) {
-          this.broadcastData();
-        }
-      }, 1000);
+          socket.on('data', (data) => {
+            try {
+              const request = self.parseModbusRequest(data);
+              if (!request) return;
 
-      resolve();
+              let response;
+              switch (request.functionCode) {
+                case 0x03: // Read Holding Registers
+                  response = self.handleReadHoldingRegisters(request);
+                  break;
+                case 0x06: // Write Single Register
+                  response = self.handleWriteSingleRegister(request);
+                  break;
+                case 0x10: // Write Multiple Registers
+                  response = self.handleWriteMultipleRegisters(request);
+                  break;
+                default:
+                  console.log(`[Modbus] Unsupported function code: ${request.functionCode}`);
+                  return;
+              }
+
+              if (response) {
+                socket.write(response);
+              }
+            } catch (error) {
+              console.error('[Modbus] 패킷 처리 에러:', error);
+            }
+          });
+
+          socket.on('error', (err) => {
+            console.error('[Modbus] Socket 에러:', err.message);
+          });
+
+          socket.on('close', () => {
+            console.log('[Modbus] 연결 종료');
+          });
+        });
+
+        this.tcpServer.on('error', (err) => {
+          console.error('[Modbus] TCP 서버 에러:', err);
+          reject(err);
+        });
+
+        this.tcpServer.listen(this.modbusPort, '0.0.0.0', () => {
+          console.log(`[Master] Modbus TCP 서버 시작: 포트 ${this.modbusPort}`);
+          console.log('[Master] 슬레이브 연결 대기 중...\n');
+          
+          // 주기적으로 통계 업데이트
+          this.statsInterval = setInterval(() => {
+            if (Object.keys(this.slaveData).length > 0) {
+              this.broadcastData();
+            }
+          }, 1000);
+
+          resolve();
+        });
+      } catch (error) {
+        console.error('[Master] 시작 실패:', error);
+        reject(error);
+      }
     });
   }
 
   async stop() {
     if (this.statsInterval) {
       clearInterval(this.statsInterval);
+    }
+    if (this.tcpServer) {
+      this.tcpServer.close();
     }
     console.log('[Master] 종료됨');
   }

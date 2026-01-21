@@ -8,10 +8,10 @@ services:
     environment:
       - NODE_MODE=master
       - PORT=3000
-      - MODBUS_PORT=502
+      - MODBUS_PORT=5020
     ports:
       - "3000:3000"
-      - "502:502"
+      - "5020:5020"
     restart: unless-stopped
     networks:
       - power-control-network
@@ -23,7 +23,7 @@ services:
     environment:
       - NODE_MODE=slave
       - MASTER_HOST=master
-      - MASTER_PORT=502
+      - MASTER_PORT=5020
       - SLAVE_ID=1
       - DEVICE_TYPE=solar
       - UPDATE_INTERVAL=5000
@@ -40,7 +40,7 @@ services:
     environment:
       - NODE_MODE=slave
       - MASTER_HOST=master
-      - MASTER_PORT=502
+      - MASTER_PORT=5020
       - SLAVE_ID=2
       - DEVICE_TYPE=wind
       - UPDATE_INTERVAL=5000
@@ -57,7 +57,7 @@ services:
     environment:
       - NODE_MODE=slave
       - MASTER_HOST=master
-      - MASTER_PORT=502
+      - MASTER_PORT=5020
       - SLAVE_ID=3
       - DEVICE_TYPE=bms
       - UPDATE_INTERVAL=5000

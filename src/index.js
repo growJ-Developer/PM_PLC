@@ -80,25 +80,43 @@ async function startNode() {
   }
 }
 
-// 서버 시작
-server.listen(PORT, '0.0.0.0', () => {
+// Slave 모드에서는 웹 서버 불필요
+if (NODE_MODE === 'slave') {
   console.log(`\n${'='.repeat(50)}`);
-  console.log(`🚀 전력제어시스템 [${NODE_MODE.toUpperCase()}] 시작`);
-  console.log(`📍 포트: ${PORT}`);
-  console.log(`🌐 URL: http://localhost:${PORT}`);
+  console.log(`📡 전력제어시스템 [SLAVE] 시작`);
   console.log(`${'='.repeat(50)}\n`);
   
   startNode();
-});
-
-// 종료 처리
-process.on('SIGINT', async () => {
-  console.log('\n시스템 종료 중...');
-  if (node && node.stop) {
-    await node.stop();
-  }
-  server.close(() => {
-    console.log('서버 종료됨');
+  
+  // 종료 처리
+  process.on('SIGINT', async () => {
+    console.log('\n시스템 종료 중...');
+    if (node && node.stop) {
+      await node.stop();
+    }
     process.exit(0);
   });
-});
+} else {
+  // Master 모드: 웹 서버 시작
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`\n${'='.repeat(50)}`);
+    console.log(`🚀 전력제어시스템 [${NODE_MODE.toUpperCase()}] 시작`);
+    console.log(`📍 포트: ${PORT}`);
+    console.log(`🌐 URL: http://localhost:${PORT}`);
+    console.log(`${'='.repeat(50)}\n`);
+    
+    startNode();
+  });
+
+  // 종료 처리
+  process.on('SIGINT', async () => {
+    console.log('\n시스템 종료 중...');
+    if (node && node.stop) {
+      await node.stop();
+    }
+    server.close(() => {
+      console.log('서버 종료됨');
+      process.exit(0);
+    });
+  });
+}
