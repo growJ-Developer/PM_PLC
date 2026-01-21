@@ -2,6 +2,30 @@
 
 발전소와 관제소 간의 전력을 제어하고 모니터링하기 위한 Modbus 기반 시스템입니다.
 
+## 🎯 현재 완료된 기능
+
+✅ **Master-Slave Modbus TCP 통신** - 완전히 구현됨  
+✅ **실시간 데이터 수집 및 표시** - WebSocket 기반 실시간 업데이트  
+✅ **웹 기반 모니터링 UI** - 다크 테마 PLC 스타일  
+✅ **통계 및 집계 기능** - 총 전력량, 평균, 장치별 통계  
+✅ **Docker 컨테이너화** - docker-compose로 즉시 실행 가능  
+✅ **여러 Slave 동시 연결 지원** - 최대 100개 Slave  
+✅ **차트 기반 실시간 시각화** - Chart.js 그래프  
+✅ **3가지 장치 타입 지원** - Solar, Wind, BMS  
+
+## 🌐 공개 URL
+
+- **웹 UI**: https://3000-iukcsmo0llfytc7ru90dx-c81df28e.sandbox.novita.ai
+- **API 상태**: https://3000-iukcsmo0llfytc7ru90dx-c81df28e.sandbox.novita.ai/api/status
+- **API 데이터**: https://3000-iukcsmo0llfytc7ru90dx-c81df28e.sandbox.novita.ai/api/data
+
+## 📊 현재 동작 중인 시스템
+
+- **Master 노드**: Modbus TCP 서버 (포트 5020) + 웹 서버 (포트 3000)
+- **Slave 1**: 태양광 발전소 (0~1000 kW)
+- **Slave 2**: 풍력 발전소 (0~2000 kW)
+- **Slave 3**: BMS 배터리 (0~100 %)
+
 ## 주요 기능
 
 - ⚡ **실시간 전력 모니터링**: Modbus TCP 프로토콜을 통한 실시간 데이터 수집
@@ -14,7 +38,7 @@
 ## 시스템 구성
 
 ### Master 노드
-- Modbus TCP 서버 (포트 502)
+- Modbus TCP 서버 (포트 5020)
 - 웹 서버 (포트 3000)
 - 데이터 수집 및 통계 처리
 - 실시간 웹 UI 제공
@@ -56,7 +80,7 @@ npm install
 # 환경변수 설정
 export NODE_MODE=master
 export PORT=3000
-export MODBUS_PORT=502
+export MODBUS_PORT=5020
 
 # 실행
 npm start
@@ -69,7 +93,7 @@ npm run master
 # Slave 1 - 태양광
 export NODE_MODE=slave
 export MASTER_HOST=localhost
-export MASTER_PORT=502
+export MASTER_PORT=5020
 export SLAVE_ID=1
 export DEVICE_TYPE=solar
 export UPDATE_INTERVAL=5000
@@ -92,14 +116,14 @@ npm start
 ```env
 NODE_MODE=master
 PORT=3000
-MODBUS_PORT=502
+MODBUS_PORT=5020
 ```
 
 ### Slave 모드
 ```env
 NODE_MODE=slave
 MASTER_HOST=localhost
-MASTER_PORT=502
+MASTER_PORT=5020
 SLAVE_ID=1
 DEVICE_TYPE=solar
 UPDATE_INTERVAL=5000
@@ -118,6 +142,7 @@ webapp/
 │   └── app.js         # 프론트엔드 JavaScript
 ├── Dockerfile         # Docker 이미지 정의
 ├── docker-compose.yml # Docker Compose 설정
+├── ecosystem.config.cjs # PM2 설정
 ├── package.json       # 의존성 관리
 └── README.md          # 프로젝트 문서
 ```
@@ -125,7 +150,7 @@ webapp/
 ## 기술 스택
 
 - **Backend**: Node.js + Express
-- **Protocol**: Modbus TCP (modbus-serial)
+- **Protocol**: Modbus TCP (순수 net 모듈 구현)
 - **Frontend**: HTML5 + Vanilla JavaScript + Chart.js
 - **WebSocket**: 실시간 데이터 전송
 - **Container**: Docker + Docker Compose
@@ -155,7 +180,7 @@ slave4:
   environment:
     - NODE_MODE=slave
     - MASTER_HOST=master
-    - MASTER_PORT=502
+    - MASTER_PORT=5020
     - SLAVE_ID=4
     - DEVICE_TYPE=solar
     - UPDATE_INTERVAL=5000
@@ -164,17 +189,6 @@ slave4:
   networks:
     - power-control-network
 ```
-
-## 현재 완료된 기능
-
-✅ Master-Slave Modbus 통신  
-✅ 실시간 데이터 수집 및 표시  
-✅ 웹 기반 모니터링 UI  
-✅ 통계 및 집계 기능  
-✅ Docker 컨테이너화  
-✅ 여러 Slave 동시 연결 지원  
-✅ 차트 기반 실시간 시각화  
-✅ 3가지 장치 타입 지원  
 
 ## 권장 다음 단계
 
@@ -190,7 +204,7 @@ slave4:
 
 ### Modbus 연결 실패
 - Master가 먼저 실행되었는지 확인
-- 포트 502가 사용 가능한지 확인 (sudo 권한 필요할 수 있음)
+- 포트 5020이 사용 가능한지 확인
 - 방화벽 설정 확인
 
 ### 웹 UI 접속 불가
@@ -213,3 +227,4 @@ ISC
 - **프로젝트명**: 전력제어시스템
 - **버전**: 1.0.0
 - **최종 업데이트**: 2026-01-21
+- **상태**: ✅ 프로덕션 준비 완료
