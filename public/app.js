@@ -125,6 +125,11 @@ function updateStatistics(stats) {
 function updateSlavesTable(slaves) {
     const tbody = document.getElementById('slavesTableBody');
     
+    // 슬레이브 테이블이 없으면 (탭 삭제된 경우) 아무 작업도 하지 않음
+    if (!tbody) {
+        return;
+    }
+    
     if (!slaves || slaves.length === 0) {
         tbody.innerHTML = `
             <tr>
