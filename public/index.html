@@ -528,53 +528,65 @@
         <div class="tab-content-container">
             <!-- 대시보드 탭 - 모든 차트 표시 -->
             <div id="tab-dashboard" class="tab-pane active">
-                <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 8px; height: 100%;">
+                <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 8px; height: 100%; overflow: hidden;">
                     <!-- 상단 3개 차트 -->
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                        <div class="chart-card">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; overflow: hidden;">
+                        <div class="chart-card" style="display: flex; flex-direction: column;">
                             <div class="card-title">
                                 <i class="material-icons">timeline</i>
                                 실시간 전력
                             </div>
-                            <canvas id="powerChart" height="50"></canvas>
+                            <div style="flex: 1; position: relative;">
+                                <canvas id="powerChart"></canvas>
+                            </div>
                         </div>
-                        <div class="chart-card">
+                        <div class="chart-card" style="display: flex; flex-direction: column;">
                             <div class="card-title">
                                 <i class="material-icons">pie_chart</i>
                                 장치별 분포
                             </div>
-                            <canvas id="pieChart" height="50"></canvas>
+                            <div style="flex: 1; position: relative;">
+                                <canvas id="pieChart"></canvas>
+                            </div>
                         </div>
-                        <div class="chart-card">
+                        <div class="chart-card" style="display: flex; flex-direction: column;">
                             <div class="card-title">
                                 <i class="material-icons">bar_chart</i>
                                 장치별 전력량
                             </div>
-                            <canvas id="barChart" height="50"></canvas>
+                            <div style="flex: 1; position: relative;">
+                                <canvas id="barChart"></canvas>
+                            </div>
                         </div>
                     </div>
                     <!-- 하단 3개 차트 -->
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                        <div class="chart-card">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; overflow: hidden;">
+                        <div class="chart-card" style="display: flex; flex-direction: column;">
                             <div class="card-title">
                                 <i class="material-icons">thermostat</i>
                                 온도 모니터링
                             </div>
-                            <canvas id="temperatureChart" height="50"></canvas>
+                            <div style="flex: 1; position: relative;">
+                                <canvas id="temperatureChart"></canvas>
+                            </div>
                         </div>
-                        <div class="chart-card">
+                        <div class="chart-card" style="display: flex; flex-direction: column;">
                             <div class="card-title">
                                 <i class="material-icons">radar</i>
                                 성능 레이더
                             </div>
-                            <canvas id="radarChart" height="50"></canvas>
+                            <div style="flex: 1; position: relative;">
+                                <canvas id="radarChart"></canvas>
+                            </div>
                         </div>
-                        <div class="chart-card">
+                        <div class="chart-card" style="display: flex; flex-direction: column;">
                             <div class="card-title">
                                 <i class="material-icons">bubble_chart</i>
                                 효율성 분석
                             </div>
-                            <canvas id="bubbleChart" height="50"></canvas>
+                            <div style="flex: 1; position: relative;">
+                                <canvas id="bubbleChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
