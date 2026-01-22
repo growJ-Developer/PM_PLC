@@ -60,9 +60,9 @@
 
         /* 통계 카드 영역 */
         .stats-row {
-            padding: 8px 16px 0 16px;
+            padding: 6px 12px 0 12px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
 
@@ -70,7 +70,7 @@
             flex: 1;
             background: linear-gradient(135deg, var(--bg-card) 0%, #141824 100%);
             border-radius: 6px;
-            padding: 12px;
+            padding: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.05);
             transition: transform 0.2s;
@@ -82,18 +82,18 @@
         }
 
         .stat-card .stat-icon {
-            font-size: 24px;
-            margin-bottom: 4px;
+            font-size: 26px;
+            margin-bottom: 3px;
         }
 
         .stat-card .stat-value {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 500;
-            margin: 4px 0;
+            margin: 3px 0;
         }
 
         .stat-card .stat-label {
-            font-size: 10px;
+            font-size: 12px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -118,22 +118,22 @@
         /* 탭 */
         .tabs {
             background: var(--bg-secondary);
-            height: 40px;
-            margin: 8px 16px 0 16px;
+            height: 36px;
+            margin: 6px 12px 0 12px;
             border-radius: 6px;
             overflow: hidden;
         }
 
         .tabs .tab {
-            height: 40px;
-            line-height: 40px;
+            height: 36px;
+            line-height: 36px;
         }
 
         .tabs .tab a {
             color: var(--text-secondary);
-            height: 40px;
-            line-height: 40px;
-            font-size: 13px;
+            height: 36px;
+            line-height: 36px;
+            font-size: 15px;
         }
 
         .tabs .tab a:hover,
@@ -151,7 +151,7 @@
         .tab-content-container {
             flex: 1;
             overflow: hidden;
-            padding: 8px 16px 8px 16px;
+            padding: 6px 12px 6px 12px;
         }
 
         .tab-content-container::-webkit-scrollbar {
@@ -171,7 +171,7 @@
         .chart-card {
             background: var(--bg-card);
             border-radius: 6px;
-            padding: 12px;
+            padding: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.05);
             height: 100%;
@@ -179,67 +179,74 @@
         }
 
         .chart-card .card-title {
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 500;
             color: var(--text-primary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 6px;
         }
         
         .chart-card .card-title i {
-            font-size: 16px;
+            font-size: 18px;
         }
 
         .chart-card .card-title i {
             color: var(--accent-blue);
         }
 
-        /* 그리드 레이아웃 */
+        /* 그리드 레이아웃 - 1920x930 최적화 */
+        .grid-all-charts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            height: calc(100vh - 148px);
+        }
+        
         .grid-2 {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 10px;
-            height: calc(100vh - 180px);
+            gap: 8px;
+            height: calc(100vh - 148px);
         }
 
         .grid-2-equal {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            height: calc(100vh - 180px);
+            gap: 8px;
+            height: calc(100vh - 148px);
         }
 
         .grid-1 {
-            height: calc(100vh - 180px);
+            height: calc(100vh - 148px);
         }
 
         /* 슬레이브 테이블 */
         .slave-table-card {
             background: var(--bg-card);
             border-radius: 6px;
-            padding: 12px;
+            padding: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.05);
-            height: calc(100vh - 180px);
+            height: calc(100vh - 148px);
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
         .slave-table-card .card-title {
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 500;
             color: var(--text-primary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 6px;
         }
         
         .slave-table-card .card-title i {
-            font-size: 16px;
+            font-size: 18px;
         }
 
         .table-wrapper {
@@ -258,7 +265,7 @@
         th {
             color: var(--accent-blue) !important;
             border-bottom: 2px solid var(--accent-blue) !important;
-            font-size: 11px;
+            font-size: 13px;
             padding: 8px 6px !important;
         }
 
@@ -266,7 +273,7 @@
             color: var(--text-primary) !important;
             border-bottom: 1px solid rgba(255,255,255,0.05) !important;
             padding: 8px 6px !important;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         tbody tr:hover {
@@ -322,9 +329,11 @@
         /* 연결 상태 칩 */
         .connection-chip {
             position: fixed;
-            top: 70px;
+            top: 72px;
             right: 20px;
             z-index: 1000;
+            display: flex;
+            align-items: center;
         }
 
         .chip {
@@ -512,49 +521,61 @@
         <!-- 탭 메뉴 -->
         <ul class="tabs">
             <li class="tab"><a href="#tab-dashboard" class="active">대시보드</a></li>
-            <li class="tab"><a href="#tab-charts">차트</a></li>
             <li class="tab"><a href="#tab-slaves">슬레이브 관리</a></li>
-            <li class="tab"><a href="#tab-analytics">분석</a></li>
         </ul>
 
         <!-- 탭 컨텐츠 -->
         <div class="tab-content-container">
-            <!-- 대시보드 탭 -->
+            <!-- 대시보드 탭 - 모든 차트 표시 -->
             <div id="tab-dashboard" class="tab-pane active">
-                <div class="grid-2">
-                    <div class="chart-card">
-                        <div class="card-title">
-                            <i class="material-icons">timeline</i>
-                            실시간 전력 모니터링
+                <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 8px; height: 100%;">
+                    <!-- 상단 3개 차트 -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <div class="chart-card">
+                            <div class="card-title">
+                                <i class="material-icons">timeline</i>
+                                실시간 전력
+                            </div>
+                            <canvas id="powerChart" height="50"></canvas>
                         </div>
-                        <canvas id="powerChart" height="80"></canvas>
+                        <div class="chart-card">
+                            <div class="card-title">
+                                <i class="material-icons">pie_chart</i>
+                                장치별 분포
+                            </div>
+                            <canvas id="pieChart" height="50"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <div class="card-title">
+                                <i class="material-icons">bar_chart</i>
+                                장치별 전력량
+                            </div>
+                            <canvas id="barChart" height="50"></canvas>
+                        </div>
                     </div>
-                    <div class="chart-card">
-                        <div class="card-title">
-                            <i class="material-icons">pie_chart</i>
-                            장치별 전력 분포
+                    <!-- 하단 3개 차트 -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                        <div class="chart-card">
+                            <div class="card-title">
+                                <i class="material-icons">thermostat</i>
+                                온도 모니터링
+                            </div>
+                            <canvas id="temperatureChart" height="50"></canvas>
                         </div>
-                        <canvas id="pieChart" height="80"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 차트 탭 -->
-            <div id="tab-charts" class="tab-pane">
-                <div class="grid-2-equal" style="margin-bottom: 12px;">
-                    <div class="chart-card">
-                        <div class="card-title">
-                            <i class="material-icons">bar_chart</i>
-                            장치별 전력량
+                        <div class="chart-card">
+                            <div class="card-title">
+                                <i class="material-icons">radar</i>
+                                성능 레이더
+                            </div>
+                            <canvas id="radarChart" height="50"></canvas>
                         </div>
-                        <canvas id="barChart" height="50"></canvas>
-                    </div>
-                    <div class="chart-card">
-                        <div class="card-title">
-                            <i class="material-icons">thermostat</i>
-                            온도 모니터링
+                        <div class="chart-card">
+                            <div class="card-title">
+                                <i class="material-icons">bubble_chart</i>
+                                효율성 분석
+                            </div>
+                            <canvas id="bubbleChart" height="50"></canvas>
                         </div>
-                        <canvas id="temperatureChart" height="50"></canvas>
                     </div>
                 </div>
             </div>
@@ -593,25 +614,7 @@
                 </div>
             </div>
 
-            <!-- 분석 탭 -->
-            <div id="tab-analytics" class="tab-pane">
-                <div class="grid-2-equal">
-                    <div class="chart-card">
-                        <div class="card-title">
-                            <i class="material-icons">radar</i>
-                            성능 레이더 차트
-                        </div>
-                        <canvas id="radarChart" height="80"></canvas>
-                    </div>
-                    <div class="chart-card">
-                        <div class="card-title">
-                            <i class="material-icons">bubble_chart</i>
-                            효율성 분석
-                        </div>
-                        <canvas id="bubbleChart" height="80"></canvas>
-                    </div>
-                </div>
-            </div>
+            <!-- 분석 탭 제거 -->
         </div>
     </div>
 

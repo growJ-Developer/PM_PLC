@@ -17,6 +17,8 @@ class SlaveNode {
     
     this.isConnected = false;
     this.intervalId = null;
+    this.isPoweredOn = true; // 전원 상태
+    this.adminPassword = 'admin123'; // 관리자 비밀번호
     
     // 추가 데이터
     this.startTime = Date.now();
@@ -36,18 +38,55 @@ class SlaveNode {
     this.app.use(express.static(path.join(__dirname, '../public/slave')));
     this.app.use(express.json());
     
-    // API 엔드포인트
+    // API 엔드포인트 - 상태 조회
     this.app.get('/api/status', (req, res) => {
       res.json({
         slaveId: this.slaveId,
         deviceType: this.deviceType,
         connected: this.isConnected,
+        powered: this.isPoweredOn,
         masterHost: this.masterHost,
         masterPort: this.masterPort,
         data: this.currentData,
         uptime: Math.floor((Date.now() - this.startTime) / 1000),
         timestamp: new Date().toISOString()
       });
+    });
+    
+    // 전원 제어 API
+    this.app.post('/api/power/toggle', (req, res) => {
+      const { enable, password } = req.body;
+      
+      // 비밀번호 확인
+      if (password !== this.adminPassword) {
+        return res.json({ success: false, error: '비밀번호가 올바르지 않습니다.' });
+      }
+      
+      this.isPoweredOn = enable;
+      console.log(`[Slave ${this.slaveId}] 전원 ${enable ? 'ON' : 'OFF'}`);
+      
+      res.json({ success: true, message: `전원 ${enable ? '활성화' : '비활성화'} 완료` });
+    });
+    
+    // 비밀번호 변경 API
+    this.app.post('/api/admin/change-password', (req, res) => {
+      const { currentPassword, newPassword } = req.body;
+      
+      // 현재 비밀번호 확인
+      if (currentPassword !== this.adminPassword) {
+        return res.json({ success: false, error: '현재 비밀번호가 올바르지 않습니다.' });
+      }
+      
+      // 새 비밀번호 검증
+      if (!newPassword || newPassword.length < 4) {
+        return res.json({ success: false, error: '비밀번호는 최소 4자 이상이어야 합니다.' });
+      }
+      
+      // 비밀번호 변경
+      this.adminPassword = newPassword;
+      console.log(`[Slave ${this.slaveId}] 비밀번호가 변경되었습니다.`);
+      
+      res.json({ success: true, message: '비밀번호가 변경되었습니다.' });
     });
   }
 
@@ -113,11 +152,14 @@ class SlaveNode {
     }
 
     try {
-      const power = this.generateRandomPower();
+      // 전원이 OFF이면 0으로 전송
+      const power = this.isPoweredOn ? this.generateRandomPower() : 0;
       this.currentData.power = power;
       
       // 추가 데이터 생성
-      this.generateAdditionalData();
+      if (this.isPoweredOn) {
+        this.generateAdditionalData();
+      }
       
       const deviceTypeCode = this.getDeviceTypeCode();
       
@@ -130,8 +172,8 @@ class SlaveNode {
       const ambientTempInt = Math.round(this.currentData.ambientTemp * 10);
       const internalTempInt = Math.round(this.currentData.internalTemp * 10);
       
-      // 구동시간 (32비트)
-      const runtime = this.currentData.runtime;
+      // 구동시간 (32비트) - 전원 OFF이면 0
+      const runtime = this.isPoweredOn ? this.currentData.runtime : 0;
       const runtimeHigh = (runtime >> 16) & 0xFFFF;
       const runtimeLow = runtime & 0xFFFF;
       
@@ -143,7 +185,7 @@ class SlaveNode {
         deviceTypeCode,     // 0: 장치 타입
         powerHigh,          // 1: 전력 상위 16비트
         powerLow,           // 2: 전력 하위 16비트
-        1,                  // 3: 상태 (1=정상)
+        this.isPoweredOn ? 1 : 0,  // 3: 상태 (1=정상, 0=오프라인)
         ambientTempInt,     // 4: 외기온도
         internalTempInt,    // 5: 내부온도
         runtimeHigh,        // 6: 구동시간 상위
@@ -155,7 +197,8 @@ class SlaveNode {
       await this.client.writeRegisters(baseAddr, data);
       
       const unit = this.deviceType.toLowerCase() === 'bms' ? '%' : 'kW';
-      console.log(`[Slave ${this.slaveId}] 데이터 전송: ${power.toFixed(2)} ${unit}, 외기: ${this.currentData.ambientTemp.toFixed(1)}°C, 내부: ${this.currentData.internalTemp.toFixed(1)}°C`);
+      const status = this.isPoweredOn ? 'ON' : 'OFF';
+      console.log(`[Slave ${this.slaveId}] 데이터 전송 [${status}]: ${power.toFixed(2)} ${unit}, 외기: ${this.currentData.ambientTemp.toFixed(1)}°C, 내부: ${this.currentData.internalTemp.toFixed(1)}°C`);
       
     } catch (error) {
       console.error(`[Slave ${this.slaveId}] 데이터 전송 실패:`, error.message);
