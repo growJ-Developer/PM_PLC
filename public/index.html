@@ -447,17 +447,20 @@
         }
 
         /* 버튼 */
-        .btn, .btn-small, .btn-flat {
+        .btn, .btn-small {
             background: var(--accent-blue);
             text-transform: none;
+            color: white !important;
         }
 
         .btn:hover, .btn-small:hover {
             background: #1976d2;
+            color: white !important;
         }
 
         .btn-flat {
-            color: var(--accent-blue);
+            color: var(--accent-blue) !important;
+            background: transparent;
         }
 
         /* Progress */
@@ -524,11 +527,13 @@
             </div>
         </div>
 
-        <!-- 탭 메뉴 -->
-        <ul class="tabs">
-            <li class="tab"><a href="#tab-dashboard" class="active">대시보드</a></li>
-            <li class="tab"><a href="#tab-slaves">슬레이브 관리</a></li>
-        </ul>
+        <!-- 탭 메뉴 제거 - 대시보드만 표시 -->
+        <div style="height: 0; overflow: hidden;">
+            <ul class="tabs">
+                <li class="tab"><a href="#tab-dashboard" class="active">대시보드</a></li>
+                <li class="tab"><a href="#tab-slaves">슬레이브 관리</a></li>
+            </ul>
+        </div>
 
         <!-- 탭 컨텐츠 -->
         <div class="tab-content-container">
