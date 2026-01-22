@@ -527,19 +527,9 @@
             </div>
         </div>
 
-        <!-- 탭 메뉴 제거 - 대시보드만 표시 -->
-        <div style="height: 0; overflow: hidden;">
-            <ul class="tabs">
-                <li class="tab"><a href="#tab-dashboard" class="active">대시보드</a></li>
-                <li class="tab"><a href="#tab-slaves">슬레이브 관리</a></li>
-            </ul>
-        </div>
-
-        <!-- 탭 컨텐츠 -->
+        <!-- 대시보드 - 탭 제거 -->
         <div class="tab-content-container">
-            <!-- 대시보드 탭 - 모든 차트 표시 -->
-            <div id="tab-dashboard" class="tab-pane active">
-                <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 8px; height: 100%; overflow: hidden;">
+            <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 8px; height: 100%; overflow: hidden;">
                     <!-- 상단 3개 차트 -->
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; overflow: hidden;">
                         <div class="chart-card" style="display: flex; flex-direction: column;">
@@ -602,44 +592,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 슬레이브 관리 탭 -->
-            <div id="tab-slaves" class="tab-pane">
-                <div class="slave-table-card">
-                    <div class="card-title">
-                        <i class="material-icons">devices_other</i>
-                        슬레이브 노드 현황
-                    </div>
-                    <div class="table-wrapper">
-                        <table class="highlight responsive-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>장치 타입</th>
-                                    <th>발전량</th>
-                                    <th>외기온도</th>
-                                    <th>내부온도</th>
-                                    <th>구동시간</th>
-                                    <th>상태</th>
-                                    <th>작업</th>
-                                </tr>
-                            </thead>
-                            <tbody id="slavesTableBody">
-                                <tr>
-                                    <td colspan="8" style="text-align: center; padding: 40px !important;">
-                                        <div class="progress"><div class="indeterminate"></div></div>
-                                        <p style="margin-top: 10px;">슬레이브 데이터를 기다리는 중...</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 분석 탭 제거 -->
-        </div>
-    </div>
 
     <!-- 관리자 모달 -->
     <div id="admin-modal" class="modal">
