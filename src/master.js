@@ -115,11 +115,6 @@ class MasterNode {
   parseSlaveData(unitID, startAddr, values) {
     const baseAddr = unitID * 20; // 각 슬레이브는 20개 레지스터 사용
     
-    // Slave가 전원 OFF 상태면 데이터 무시
-    if (this.slavePowerStatus[unitID] === false) {
-      return;
-    }
-    
     if (startAddr >= baseAddr && startAddr < baseAddr + 20) {
       const deviceType = this.holdingRegisters[baseAddr] || 0;
       const powerHigh = this.holdingRegisters[baseAddr + 1] || 0;
@@ -140,11 +135,12 @@ class MasterNode {
         3: 'BMS'
       };
 
+      // status 레지스터 값에 따라 상태 결정 (1=Online, 0=Offline)
       this.slaveData[unitID] = {
         slaveId: unitID,
         deviceType: deviceTypeMap[deviceType] || 'Unknown',
         power: power / 100, // 소수점 2자리 복원
-        status: (this.slavePowerStatus[unitID] !== false && status === 1) ? 'Online' : 'Offline',
+        status: status === 1 ? 'Online' : 'Offline',
         ambientTemp: ambientTemp / 10, // 소수점 1자리
         internalTemp: internalTemp / 10,
         runtime: runtime, // 초 단위
