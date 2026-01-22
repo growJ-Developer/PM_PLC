@@ -48,13 +48,15 @@
         .container {
             height: calc(100vh - 64px);
             overflow: hidden;
-            padding: 20px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         
         .info-card {
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 16px;
+            border-radius: 6px;
+            padding: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             background: var(--bg-card);
             border: 1px solid rgba(255,255,255,0.05);
@@ -62,21 +64,21 @@
         
         .info-card h5 {
             color: var(--accent-blue);
-            font-size: 18px;
-            margin-bottom: 16px;
+            font-size: 16px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         
         .stat-value {
-            font-size: 48px;
+            font-size: 36px;
             font-weight: 500;
             color: var(--accent-purple);
         }
         
         .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -85,7 +87,7 @@
         .data-row {
             display: flex;
             align-items: center;
-            padding: 12px 0;
+            padding: 8px 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         
@@ -94,18 +96,20 @@
         }
         
         .data-icon {
-            margin-right: 15px;
+            margin-right: 12px;
             color: var(--accent-blue);
+            font-size: 20px;
         }
         
         .data-label {
             flex: 1;
             font-weight: 400;
             color: var(--text-secondary);
+            font-size: 13px;
         }
         
         .data-value {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 500;
             color: var(--text-primary);
         }
@@ -121,15 +125,14 @@
         .grid-4 {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 16px;
+            gap: 12px;
+            flex-shrink: 0;
         }
 
         .grid-2 {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 16px;
+            gap: 12px;
         }
 
         @media (max-width: 1200px) {
