@@ -1,55 +1,88 @@
-# 전력제어시스템 (Power Control System)
+# 전력제어시스템 (Power Control System) v2.0
 
 발전소와 관제소 간의 전력을 제어하고 모니터링하기 위한 Modbus 기반 시스템입니다.
 
-## 🎯 현재 완료된 기능
+## 🎨 v2.0 주요 업데이트
 
-✅ **Master-Slave Modbus TCP 통신** - 완전히 구현됨  
-✅ **실시간 데이터 수집 및 표시** - WebSocket 기반 실시간 업데이트  
-✅ **웹 기반 모니터링 UI** - 다크 테마 PLC 스타일  
-✅ **통계 및 집계 기능** - 총 전력량, 평균, 장치별 통계  
-✅ **Docker 컨테이너화** - docker-compose로 즉시 실행 가능  
-✅ **여러 Slave 동시 연결 지원** - 최대 100개 Slave  
-✅ **차트 기반 실시간 시각화** - Chart.js 그래프  
-✅ **3가지 장치 타입 지원** - Solar, Wind, BMS  
+### ✨ Material Design UI
+- Google Material Design 스타일 적용
+- 직관적이고 현대적인 인터페이스
+- 반응형 디자인 (모바일/태블릿/데스크톱)
+- Materialize CSS 프레임워크 사용
+
+### 🌐 Slave 웹 서비스
+- 각 Slave 노드가 독립적인 웹 서버 운영
+- 개별 포트로 접근 가능 (3001, 3002, 3003...)
+- 실시간 상태 모니터링 페이지 제공
+
+### 📊 확장된 데이터 필드
+- **전력량**: 발전량 / 배터리량
+- **외기온도**: 20-40°C 범위
+- **내부온도**: 25-60°C 범위
+- **구동시간**: 시작 이후 누적 시간
+
+### 🎛️ 관리자 제어 기능
+- 비밀번호 보호 (기본값: `admin123`)
+- Slave 노드 전원 ON/OFF 제어
+- 실시간 상태 반영
+
+### 📈 다양한 차트
+- **실시간 전력 라인 차트**
+- **파이 차트** (장치별 분포)
+- **바 차트** (장치별 전력량)
+- **온도 차트** (외기/내부)
+- **구동시간 추이 차트**
+- **레이더 차트** (성능 지표)
+- **버블 차트** (효율성 분석)
+
+### 🐳 개별 Dockerfile
+- `Dockerfile.master` - Master 노드 전용
+- `Dockerfile.slave` - Slave 노드 전용
+- Docker Compose로 통합 관리
 
 ## 🌐 공개 URL
 
+### Master 노드
 - **웹 UI**: https://3000-iukcsmo0llfytc7ru90dx-c81df28e.sandbox.novita.ai
-- **API 상태**: https://3000-iukcsmo0llfytc7ru90dx-c81df28e.sandbox.novita.ai/api/status
 - **API 데이터**: https://3000-iukcsmo0llfytc7ru90dx-c81df28e.sandbox.novita.ai/api/data
+
+### Slave 노드
+- **Slave 1 (Solar)**: https://3001-iukcsmo0llfytc7ru90dx-c81df28e.sandbox.novita.ai
+- **Slave 2 (Wind)**: https://3002-iukcsmo0llfytc7ru90dx-c81df28e.sandbox.novita.ai
+- **Slave 3 (BMS)**: https://3003-iukcsmo0llfytc7ru90dx-c81df28e.sandbox.novita.ai
 
 ## 📊 현재 동작 중인 시스템
 
-- **Master 노드**: Modbus TCP 서버 (포트 5020) + 웹 서버 (포트 3000)
-- **Slave 1**: 태양광 발전소 (0~1000 kW)
-- **Slave 2**: 풍력 발전소 (0~2000 kW)
-- **Slave 3**: BMS 배터리 (0~100 %)
+```
+Master 노드 (포트 3000, 5020)
+├── 📊 Material Design 대시보드
+├── 📈 7개 종류의 차트
+├── 🎛️ 관리자 제어 패널
+└── 🔌 Modbus TCP 서버
 
-## 주요 기능
+Slave 노드들
+├── Slave 1 (Solar) - 포트 3001
+│   ├── 전력: 0~1000 kW
+│   └── 🌐 독립 웹 서버
+├── Slave 2 (Wind) - 포트 3002
+│   ├── 전력: 0~2000 kW
+│   └── 🌐 독립 웹 서버
+└── Slave 3 (BMS) - 포트 3003
+    ├── 배터리: 0~100 %
+    └── 🌐 독립 웹 서버
+```
 
-- ⚡ **실시간 전력 모니터링**: Modbus TCP 프로토콜을 통한 실시간 데이터 수집
-- 📊 **통계 및 집계**: 전체 전력량, 평균, 장치별 통계 자동 계산
-- 🎛️ **Master-Slave 아키텍처**: 1개의 Master와 여러 Slave 노드 연결 지원
-- 🌐 **웹 기반 UI**: 다크 테마 PLC 스타일의 직관적인 모니터링 인터페이스
-- 🔄 **자동 데이터 생성**: Slave 노드에서 발전량/배터리량 랜덤 생성
-- 🐳 **Docker 기반**: 컨테이너로 간편한 배포 및 확장
+## 🎯 완성된 기능
 
-## 시스템 구성
-
-### Master 노드
-- Modbus TCP 서버 (포트 5020)
-- 웹 서버 (포트 3000)
-- 데이터 수집 및 통계 처리
-- 실시간 웹 UI 제공
-
-### Slave 노드
-- Modbus TCP 클라이언트
-- 3가지 장치 타입 지원:
-  - **Solar (태양광)**: 0~1000 kW
-  - **Wind (풍력)**: 0~2000 kW
-  - **BMS (배터리)**: 0~100 %
-- 설정 가능한 업데이트 주기
+✅ **Material Design UI** - 현대적이고 직관적인 인터페이스  
+✅ **Master-Slave Modbus TCP 통신** - 완전히 구현됨  
+✅ **Slave 웹 서버** - 각 Slave가 독립적인 웹 UI 제공  
+✅ **확장 데이터** - 전력, 외기온도, 내부온도, 구동시간  
+✅ **관리자 제어** - 비밀번호 보호 + Slave 전원 제어  
+✅ **7가지 차트** - 라인, 파이, 바, 온도, 구동시간, 레이더, 버블  
+✅ **개별 Dockerfile** - Master/Slave 분리  
+✅ **실시간 WebSocket 통신** - 즉각적인 데이터 업데이트  
+✅ **탭 기반 UI** - 대시보드, 차트, 슬레이브 관리, 분석  
 
 ## 빠른 시작
 
@@ -60,74 +93,75 @@
 docker-compose up -d
 
 # 로그 확인
-docker-compose logs -f
+docker-compose logs -f master
+docker-compose logs -f slave1
 
 # 시스템 중지
 docker-compose down
 ```
 
-웹 UI 접속: http://localhost:3000
-
 ### 개별 실행
 
-#### 1. 의존성 설치
+#### Master 노드
 ```bash
+cd /home/user/webapp
 npm install
+NODE_MODE=master PORT=3000 MODBUS_PORT=5020 node src/index.js
 ```
 
-#### 2. Master 노드 실행
+#### Slave 노드
 ```bash
-# 환경변수 설정
-export NODE_MODE=master
-export PORT=3000
-export MODBUS_PORT=5020
+# Slave 1 (Solar)
+NODE_MODE=slave MASTER_HOST=localhost MASTER_PORT=5020 SLAVE_ID=1 DEVICE_TYPE=solar node src/index.js
 
-# 실행
-npm start
-# 또는
-npm run master
+# Slave 2 (Wind)
+NODE_MODE=slave MASTER_HOST=localhost MASTER_PORT=5020 SLAVE_ID=2 DEVICE_TYPE=wind node src/index.js
+
+# Slave 3 (BMS)
+NODE_MODE=slave MASTER_HOST=localhost MASTER_PORT=5020 SLAVE_ID=3 DEVICE_TYPE=bms node src/index.js
 ```
 
-#### 3. Slave 노드 실행 (별도 터미널)
-```bash
-# Slave 1 - 태양광
-export NODE_MODE=slave
-export MASTER_HOST=localhost
-export MASTER_PORT=5020
-export SLAVE_ID=1
-export DEVICE_TYPE=solar
-export UPDATE_INTERVAL=5000
+## 환경변수
 
-npm start
-```
-
-```bash
-# Slave 2 - 풍력
-export NODE_MODE=slave
-export SLAVE_ID=2
-export DEVICE_TYPE=wind
-
-npm start
-```
-
-## 환경변수 설정
-
-### Master 모드
+### Master
 ```env
 NODE_MODE=master
 PORT=3000
 MODBUS_PORT=5020
 ```
 
-### Slave 모드
+### Slave
 ```env
 NODE_MODE=slave
 MASTER_HOST=localhost
 MASTER_PORT=5020
 SLAVE_ID=1
 DEVICE_TYPE=solar
-UPDATE_INTERVAL=5000
+UPDATE_INTERVAL=3000
 ```
+
+## Modbus 레지스터 구조 (업데이트)
+
+각 Slave는 **20개**의 Holding Register를 사용합니다 (Slave ID × 20):
+
+| 주소 | 설명 | 값 | 단위 |
+|------|------|-----|------|
+| 0 | 장치 타입 | 1=Solar, 2=Wind, 3=BMS | - |
+| 1 | 전력값 상위 16비트 | 0~65535 | - |
+| 2 | 전력값 하위 16비트 | 0~65535 | - |
+| 3 | 상태 | 1=정상, 0=오류 | - |
+| 4 | 외기온도 | 정수 × 10 (253 = 25.3°C) | 0.1°C |
+| 5 | 내부온도 | 정수 × 10 | 0.1°C |
+| 6 | 구동시간 상위 16비트 | 0~65535 | 초 |
+| 7 | 구동시간 하위 16비트 | 0~65535 | 초 |
+| 8-19 | 예약 | - | - |
+
+## 관리자 기능 사용법
+
+1. Master UI에서 설정 아이콘 클릭
+2. 비밀번호 입력 (기본값: `admin123`)
+3. Slave 노드 ON/OFF 스위치 토글
+4. 실시간으로 상태 반영
 
 ## 프로젝트 구조
 
@@ -135,12 +169,15 @@ UPDATE_INTERVAL=5000
 webapp/
 ├── src/
 │   ├── index.js       # 메인 애플리케이션
-│   ├── master.js      # Master 노드 (Modbus Server)
-│   └── slave.js       # Slave 노드 (Modbus Client)
+│   ├── master.js      # Master 노드 (Modbus Server + API)
+│   └── slave.js       # Slave 노드 (Modbus Client + 웹서버)
 ├── public/
-│   ├── index.html     # 웹 UI
-│   └── app.js         # 프론트엔드 JavaScript
-├── Dockerfile         # Docker 이미지 정의
+│   ├── index.html     # Master 웹 UI (Material Design)
+│   ├── app.js         # Master 프론트엔드 JavaScript
+│   └── slave/
+│       └── index.html # Slave 웹 UI
+├── Dockerfile.master  # Master 전용 Dockerfile
+├── Dockerfile.slave   # Slave 전용 Dockerfile
 ├── docker-compose.yml # Docker Compose 설정
 ├── ecosystem.config.cjs # PM2 설정
 ├── package.json       # 의존성 관리
@@ -150,71 +187,86 @@ webapp/
 ## 기술 스택
 
 - **Backend**: Node.js + Express
-- **Protocol**: Modbus TCP (순수 net 모듈 구현)
-- **Frontend**: HTML5 + Vanilla JavaScript + Chart.js
+- **Protocol**: Modbus TCP (순수 net 모듈 + modbus-serial)
+- **Frontend**: 
+  - Master: Materialize CSS + Material Icons
+  - Slave: Materialize CSS
+- **Charts**: Chart.js (7가지 타입)
 - **WebSocket**: 실시간 데이터 전송
 - **Container**: Docker + Docker Compose
 
-## Modbus 프로토콜 구조
+## API 엔드포인트
 
-각 Slave는 10개의 Holding Register를 사용합니다 (Slave ID × 10):
+### Master API
+- `GET /api/status` - 시스템 상태
+- `GET /api/data` - 전체 슬레이브 데이터 및 통계
+- `POST /api/slave/toggle` - Slave 전원 제어
 
-| 주소 | 설명 | 값 |
-|------|------|-----|
-| 0 | 장치 타입 | 1=Solar, 2=Wind, 3=BMS |
-| 1 | 전력값 상위 16비트 | 0~65535 |
-| 2 | 전력값 하위 16비트 | 0~65535 |
-| 3 | 상태 | 1=정상, 0=오류 |
-| 4-5 | 예약 | - |
+### Slave API
+- `GET /api/status` - Slave 상태 및 데이터
 
-전력값은 32비트 정수로 저장되며, 실제 값의 100배로 인코딩됩니다.
-예: 1234.56 kW → 123456
+## 차트 종류
 
-## Slave 추가 방법
+1. **실시간 전력 차트** (Line) - 각 Slave별 전력 추이
+2. **파이 차트** (Doughnut) - 장치별 전력 분포
+3. **바 차트** (Bar) - 장치별 전력량 비교
+4. **온도 차트** (Line) - 외기/내부 온도 추이
+5. **구동시간 차트** (Line) - 각 Slave 구동시간
+6. **레이더 차트** (Radar) - 성능 지표 종합
+7. **버블 차트** (Bubble) - 온도-전력-구동시간 상관관계
 
-### docker-compose.yml에 추가
-```yaml
-slave4:
-  build: .
-  container_name: power-control-slave4
-  environment:
-    - NODE_MODE=slave
-    - MASTER_HOST=master
-    - MASTER_PORT=5020
-    - SLAVE_ID=4
-    - DEVICE_TYPE=solar
-    - UPDATE_INTERVAL=5000
-  depends_on:
-    - master
-  networks:
-    - power-control-network
-```
+## 포트 구성
+
+| 서비스 | 포트 | 용도 |
+|--------|------|------|
+| Master 웹 | 3000 | Master UI |
+| Master Modbus | 5020 | Modbus TCP 서버 |
+| Slave 1 웹 | 3001 | Slave 1 UI |
+| Slave 2 웹 | 3002 | Slave 2 UI |
+| Slave 3 웹 | 3003 | Slave 3 UI |
 
 ## 권장 다음 단계
 
-- 🔐 인증/권한 시스템 추가
-- 💾 데이터베이스 연동 (이력 저장)
-- 📧 알람/알림 시스템 (임계값 초과 시)
-- 📱 모바일 반응형 UI 개선
-- 🔧 설정 관리 UI 추가
-- 📈 고급 분석 및 리포트 기능
-- 🌍 다국어 지원
+- 🔒 JWT 기반 인증 시스템
+- 💾 PostgreSQL/MongoDB 데이터 이력 저장
+- 📧 이메일/SMS 알림 시스템
+- 📱 Progressive Web App (PWA)
+- 🌍 다국어 지원 (i18n)
+- 📊 Excel/PDF 리포트 내보내기
+- 🔐 역할 기반 접근 제어 (RBAC)
 
 ## 문제 해결
 
-### Modbus 연결 실패
-- Master가 먼저 실행되었는지 확인
-- 포트 5020이 사용 가능한지 확인
-- 방화벽 설정 확인
-
 ### 웹 UI 접속 불가
-- 포트 3000이 열려있는지 확인
-- Master 노드가 정상 실행 중인지 확인
-
-### Docker 네트워크 문제
 ```bash
+# 포트 확인
+ss -tlnp | grep ":3000"
+
+# 프로세스 확인
+pm2 list
+pm2 logs power-master --nostream
+```
+
+### Modbus 연결 실패
+```bash
+# Master 로그 확인
+pm2 logs power-master --nostream | grep Modbus
+
+# Slave 로그 확인
+cat /tmp/slave1.log | tail -20
+```
+
+### Docker 문제
+```bash
+# 컨테이너 재시작
+docker-compose restart
+
+# 로그 확인
+docker-compose logs -f
+
+# 전체 재구축
 docker-compose down
-docker network prune
+docker-compose build --no-cache
 docker-compose up -d
 ```
 
@@ -225,6 +277,22 @@ ISC
 ## 개발 정보
 
 - **프로젝트명**: 전력제어시스템
-- **버전**: 1.0.0
-- **최종 업데이트**: 2026-01-21
+- **버전**: 2.0.0
+- **최종 업데이트**: 2026-01-22
 - **상태**: ✅ 프로덕션 준비 완료
+
+## 변경 이력
+
+### v2.0.0 (2026-01-22)
+- ✨ Material Design UI 적용
+- 🌐 Slave 노드 웹 서버 추가
+- 📊 확장 데이터 (외기온도, 내부온도, 구동시간)
+- 🎛️ 관리자 제어 기능
+- 📈 7가지 차트 추가
+- 🐳 개별 Dockerfile 분리
+
+### v1.0.0 (2026-01-21)
+- 🚀 초기 릴리스
+- ⚡ Modbus TCP 통신
+- 📊 기본 웹 UI
+- 🐳 Docker 지원
