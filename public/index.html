@@ -60,20 +60,25 @@
 
         /* 통계 카드 영역 */
         .stats-row {
-            padding: 6px 12px 0 12px;
+            padding: 4px 12px 0 12px;
             display: flex;
             gap: 8px;
             flex-shrink: 0;
+            height: 70px;
         }
 
         .stat-card {
             flex: 1;
             background: linear-gradient(135deg, var(--bg-card) 0%, #141824 100%);
             border-radius: 6px;
-            padding: 10px;
+            padding: 6px 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.05);
             transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .stat-card:hover {
@@ -82,18 +87,18 @@
         }
 
         .stat-card .stat-icon {
-            font-size: 26px;
-            margin-bottom: 3px;
+            font-size: 24px;
+            margin-bottom: 2px;
         }
 
         .stat-card .stat-value {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 500;
-            margin: 3px 0;
+            margin: 2px 0;
         }
 
         .stat-card .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -118,21 +123,21 @@
         /* 탭 */
         .tabs {
             background: var(--bg-secondary);
-            height: 36px;
-            margin: 6px 12px 0 12px;
+            height: 32px;
+            margin: 4px 12px 0 12px;
             border-radius: 6px;
             overflow: hidden;
         }
 
         .tabs .tab {
-            height: 36px;
-            line-height: 36px;
+            height: 32px;
+            line-height: 32px;
         }
 
         .tabs .tab a {
             color: var(--text-secondary);
-            height: 36px;
-            line-height: 36px;
+            height: 32px;
+            line-height: 32px;
             font-size: 15px;
         }
 
@@ -151,7 +156,8 @@
         .tab-content-container {
             flex: 1;
             overflow: hidden;
-            padding: 6px 12px 6px 12px;
+            padding: 4px 12px 4px 12px;
+            min-height: 0;
         }
 
         .tab-content-container::-webkit-scrollbar {
