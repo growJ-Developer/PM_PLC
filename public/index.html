@@ -5,181 +5,383 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>전력제어시스템 - Power Control System</title>
     
-    <!-- Material Design Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Material Design CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     
     <style>
         :root {
-            --primary-color: #1976d2;
-            --secondary-color: #424242;
-            --success-color: #4caf50;
-            --warning-color: #ff9800;
-            --danger-color: #f44336;
-            --info-color: #2196f3;
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #141824;
+            --bg-card: #1a1f35;
+            --text-primary: #e0e0e0;
+            --text-secondary: #9e9e9e;
+            --accent-blue: #2196f3;
+            --accent-green: #4caf50;
+            --accent-orange: #ff9800;
+            --accent-red: #f44336;
+            --accent-purple: #9c27b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Roboto', sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 0;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
         }
 
-        .navbar {
-            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* 상단 네비바 */
+        nav {
+            background: linear-gradient(135deg, #1a1f35 0%, #0f1421 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            height: 64px;
+            line-height: 64px;
         }
 
-        .navbar .brand-logo {
+        nav .brand-logo {
             font-weight: 500;
+            font-size: 20px;
         }
 
-        .container {
-            margin-top: 20px;
+        /* 메인 컨테이너 */
+        .main-container {
+            height: calc(100vh - 64px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* 통계 카드 */
+        /* 통계 카드 영역 */
+        .stats-row {
+            padding: 12px 20px 0 20px;
+            display: flex;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
         .stat-card {
+            flex: 1;
+            background: linear-gradient(135deg, var(--bg-card) 0%, #141824 100%);
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            height: 100%;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.2s;
         }
 
         .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.1);
         }
 
         .stat-card .stat-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+            font-size: 32px;
+            margin-bottom: 8px;
         }
 
         .stat-card .stat-value {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 500;
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         .stat-card .stat-label {
-            font-size: 14px;
-            color: #757575;
+            font-size: 11px;
+            color: var(--text-secondary);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .stat-card.blue { background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%); color: white; }
-        .stat-card.green { background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%); color: white; }
-        .stat-card.orange { background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%); color: white; }
-        .stat-card.red { background: linear-gradient(135deg, #ef5350 0%, #e53935 100%); color: white; }
-        .stat-card.purple { background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%); color: white; }
+        .stat-card.blue { border-left: 3px solid var(--accent-blue); }
+        .stat-card.blue .stat-icon { color: var(--accent-blue); }
+        .stat-card.blue .stat-value { color: var(--accent-blue); }
 
-        .stat-card.blue .stat-label,
-        .stat-card.green .stat-label,
-        .stat-card.orange .stat-label,
-        .stat-card.red .stat-label,
-        .stat-card.purple .stat-label {
-            color: rgba(255,255,255,0.8);
+        .stat-card.green { border-left: 3px solid var(--accent-green); }
+        .stat-card.green .stat-icon { color: var(--accent-green); }
+        .stat-card.green .stat-value { color: var(--accent-green); }
+
+        .stat-card.orange { border-left: 3px solid var(--accent-orange); }
+        .stat-card.orange .stat-icon { color: var(--accent-orange); }
+        .stat-card.orange .stat-value { color: var(--accent-orange); }
+
+        .stat-card.purple { border-left: 3px solid var(--accent-purple); }
+        .stat-card.purple .stat-icon { color: var(--accent-purple); }
+        .stat-card.purple .stat-value { color: var(--accent-purple); }
+
+        /* 탭 */
+        .tabs {
+            background: var(--bg-secondary);
+            height: 48px;
+            margin: 12px 20px 0 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .tabs .tab {
+            height: 48px;
+            line-height: 48px;
+        }
+
+        .tabs .tab a {
+            color: var(--text-secondary);
+            height: 48px;
+            line-height: 48px;
+        }
+
+        .tabs .tab a:hover,
+        .tabs .tab a.active {
+            color: var(--accent-blue);
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .tabs .indicator {
+            background-color: var(--accent-blue);
+            height: 3px;
+        }
+
+        /* 탭 컨텐츠 영역 */
+        .tab-content-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 20px 20px 20px;
+        }
+
+        .tab-content-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .tab-content-container::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        .tab-content-container::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
         }
 
         /* 차트 카드 */
         .chart-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            height: 100%;
         }
 
         .chart-card .card-title {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 500;
-            color: #424242;
-            margin-bottom: 20px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+        }
+
+        .chart-card .card-title i {
+            color: var(--accent-blue);
+        }
+
+        /* 그리드 레이아웃 */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 12px;
+            height: calc(100vh - 240px);
+        }
+
+        .grid-2-equal {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            height: calc(100vh - 240px);
+        }
+
+        .grid-1 {
+            height: calc(100vh - 240px);
         }
 
         /* 슬레이브 테이블 */
         .slave-table-card {
-            background: white;
+            background: var(--bg-card);
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            height: calc(100vh - 240px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        table.highlight > tbody > tr:hover {
-            background-color: #e3f2fd;
+        .slave-table-card .card-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-wrapper {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        table {
+            background: transparent;
+        }
+
+        thead {
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        th {
+            color: var(--accent-blue) !important;
+            border-bottom: 2px solid var(--accent-blue) !important;
+            font-size: 12px;
+            padding: 12px 8px !important;
+        }
+
+        td {
+            color: var(--text-primary) !important;
+            border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+            padding: 12px 8px !important;
+            font-size: 13px;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(33, 150, 243, 0.05) !important;
         }
 
         .device-badge {
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: 500;
             display: inline-block;
         }
 
         .device-badge.solar {
-            background: #fff3e0;
-            color: #f57c00;
+            background: rgba(255, 152, 0, 0.2);
+            color: #ffa726;
+            border: 1px solid rgba(255, 152, 0, 0.4);
         }
 
         .device-badge.wind {
-            background: #e3f2fd;
-            color: #1976d2;
+            background: rgba(33, 150, 243, 0.2);
+            color: #42a5f5;
+            border: 1px solid rgba(33, 150, 243, 0.4);
         }
 
         .device-badge.bms {
-            background: #e8f5e9;
-            color: #388e3c;
+            background: rgba(76, 175, 80, 0.2);
+            color: #66bb6a;
+            border: 1px solid rgba(76, 175, 80, 0.4);
         }
 
         .status-badge {
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: 500;
             display: inline-block;
         }
 
         .status-badge.online {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.4);
         }
 
         .status-badge.offline {
-            background: #ffebee;
-            color: #c62828;
+            background: rgba(244, 67, 54, 0.2);
+            color: #ef5350;
+            border: 1px solid rgba(244, 67, 54, 0.4);
         }
 
-        /* 관리자 패널 */
-        .admin-panel {
-            background: white;
+        /* 연결 상태 칩 */
+        .connection-chip {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chip {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+        }
+
+        .chip.green {
+            border-color: var(--accent-green);
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .chip.red {
+            border-color: var(--accent-red);
+            background: rgba(244, 67, 54, 0.2);
+        }
+
+        /* 모달 */
+        .modal {
+            background: var(--bg-card);
+            color: var(--text-primary);
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-height: 80%;
         }
 
+        .modal h4 {
+            color: var(--accent-blue);
+        }
+
+        .modal .modal-content {
+            padding: 20px;
+        }
+
+        .modal .modal-footer {
+            background: var(--bg-secondary);
+        }
+
+        .input-field input {
+            color: var(--text-primary) !important;
+            border-bottom-color: rgba(255,255,255,0.2) !important;
+        }
+
+        .input-field input:focus {
+            border-bottom-color: var(--accent-blue) !important;
+            box-shadow: 0 1px 0 0 var(--accent-blue) !important;
+        }
+
+        .input-field label {
+            color: var(--text-secondary) !important;
+        }
+
+        .input-field label.active {
+            color: var(--accent-blue) !important;
+        }
+
+        /* 슬레이브 제어 */
         .slave-control-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .slave-control-item:last-child {
-            border-bottom: none;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.02);
+            border-radius: 4px;
+            margin-bottom: 8px;
         }
 
         .slave-info {
@@ -189,107 +391,78 @@
         }
 
         .slave-icon {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
             color: white;
         }
 
-        .slave-icon.solar { background: #ff9800; }
-        .slave-icon.wind { background: #2196f3; }
-        .slave-icon.bms { background: #4caf50; }
+        .slave-icon.solar { background: var(--accent-orange); }
+        .slave-icon.wind { background: var(--accent-blue); }
+        .slave-icon.bms { background: var(--accent-green); }
 
-        /* 연결 상태 표시 */
-        .connection-chip {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            z-index: 1000;
+        /* 스위치 */
+        .switch label input[type=checkbox]:checked+.lever {
+            background-color: rgba(76, 175, 80, 0.5);
         }
 
-        /* 모달 */
-        .modal {
-            border-radius: 8px;
+        .switch label input[type=checkbox]:checked+.lever:after {
+            background-color: var(--accent-green);
         }
 
-        .modal .modal-content h4 {
-            color: #1976d2;
+        .switch label .lever {
+            background-color: rgba(255,255,255,0.2);
         }
 
-        /* 로딩 */
-        .progress {
-            background: #e3f2fd;
+        .switch label .lever:after {
+            background-color: #fafafa;
         }
 
-        .progress .indeterminate {
+        /* 버튼 */
+        .btn, .btn-small, .btn-flat {
+            background: var(--accent-blue);
+            text-transform: none;
+        }
+
+        .btn:hover, .btn-small:hover {
             background: #1976d2;
         }
 
-        /* 탭 */
-        .tabs {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .btn-flat {
+            color: var(--accent-blue);
         }
 
-        .tabs .tab a {
-            color: #757575;
+        /* Progress */
+        .progress {
+            background: rgba(255,255,255,0.1);
         }
 
-        .tabs .tab a:hover,
-        .tabs .tab a.active {
-            color: #1976d2;
+        .progress .indeterminate {
+            background: var(--accent-blue);
         }
 
-        .tabs .indicator {
-            background-color: #1976d2;
+        /* 탭 컨텐츠 숨김 */
+        .tab-pane {
+            display: none;
         }
 
-        /* 반응형 */
-        @media only screen and (max-width: 768px) {
-            .stat-card {
-                margin-bottom: 10px;
-            }
-            
-            .navbar .brand-logo {
-                font-size: 18px;
-            }
-        }
-
-        /* 추가 데이터 표시 */
-        .additional-data {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .data-chip {
-            background: #e3f2fd;
-            padding: 6px 12px;
-            border-radius: 16px;
-            font-size: 12px;
-            color: #1976d2;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .data-chip i {
-            font-size: 16px;
+        .tab-pane.active {
+            display: block;
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav>
-        <div class="nav-wrapper">
-            <a href="#" class="brand-logo center"><i class="material-icons left">flash_on</i>전력제어시스템</a>
+        <div class="nav-wrapper" style="padding: 0 20px;">
+            <a href="#" class="brand-logo"><i class="material-icons left">flash_on</i>전력제어시스템</a>
             <ul class="right">
-                <li><a href="#admin-modal" class="modal-trigger"><i class="material-icons">settings</i></a></li>
+                <li><a href="#password-modal" class="modal-trigger" title="비밀번호 변경"><i class="material-icons">vpn_key</i></a></li>
+                <li><a href="#admin-modal" class="modal-trigger" title="관리자 제어"><i class="material-icons">settings</i></a></li>
             </ul>
         </div>
     </nav>
@@ -297,169 +470,136 @@
     <!-- 연결 상태 -->
     <div class="connection-chip">
         <div class="chip green white-text" id="connectionStatus">
-            <i class="material-icons left">wifi</i>
+            <i class="material-icons left" style="font-size: 16px;">wifi</i>
             연결됨
         </div>
     </div>
 
-    <div class="container">
+    <div class="main-container">
         <!-- 통계 카드 -->
-        <div class="row">
-            <div class="col s12 m6 l3">
-                <div class="stat-card blue">
-                    <i class="material-icons stat-icon">devices</i>
-                    <div class="stat-value" id="totalSlaves">0</div>
-                    <div class="stat-label">총 슬레이브</div>
-                </div>
+        <div class="stats-row">
+            <div class="stat-card blue">
+                <i class="material-icons stat-icon">devices</i>
+                <div class="stat-value" id="totalSlaves">0</div>
+                <div class="stat-label">총 슬레이브</div>
             </div>
-            <div class="col s12 m6 l3">
-                <div class="stat-card green">
-                    <i class="material-icons stat-icon">check_circle</i>
-                    <div class="stat-value" id="onlineSlaves">0</div>
-                    <div class="stat-label">온라인</div>
-                </div>
+            <div class="stat-card green">
+                <i class="material-icons stat-icon">check_circle</i>
+                <div class="stat-value" id="onlineSlaves">0</div>
+                <div class="stat-label">온라인</div>
             </div>
-            <div class="col s12 m6 l3">
-                <div class="stat-card orange">
-                    <i class="material-icons stat-icon">power</i>
-                    <div class="stat-value"><span id="totalPower">0.00</span> kW</div>
-                    <div class="stat-label">총 전력</div>
-                </div>
+            <div class="stat-card orange">
+                <i class="material-icons stat-icon">power</i>
+                <div class="stat-value"><span id="totalPower">0.00</span> <span style="font-size: 16px;">kW</span></div>
+                <div class="stat-label">총 전력</div>
             </div>
-            <div class="col s12 m6 l3">
-                <div class="stat-card purple">
-                    <i class="material-icons stat-icon">trending_up</i>
-                    <div class="stat-value"><span id="averagePower">0.00</span> kW</div>
-                    <div class="stat-label">평균 전력</div>
-                </div>
+            <div class="stat-card purple">
+                <i class="material-icons stat-icon">trending_up</i>
+                <div class="stat-value"><span id="averagePower">0.00</span> <span style="font-size: 16px;">kW</span></div>
+                <div class="stat-label">평균 전력</div>
             </div>
         </div>
 
         <!-- 탭 메뉴 -->
-        <div class="row">
-            <div class="col s12">
-                <ul class="tabs">
-                    <li class="tab col s3"><a href="#dashboard" class="active">대시보드</a></li>
-                    <li class="tab col s3"><a href="#charts">차트</a></li>
-                    <li class="tab col s3"><a href="#slaves">슬레이브 관리</a></li>
-                    <li class="tab col s3"><a href="#analytics">분석</a></li>
-                </ul>
-            </div>
-        </div>
+        <ul class="tabs">
+            <li class="tab"><a href="#tab-dashboard" class="active">대시보드</a></li>
+            <li class="tab"><a href="#tab-charts">차트</a></li>
+            <li class="tab"><a href="#tab-slaves">슬레이브 관리</a></li>
+            <li class="tab"><a href="#tab-analytics">분석</a></li>
+        </ul>
 
-        <!-- 대시보드 탭 -->
-        <div id="dashboard" class="col s12">
-            <!-- 실시간 차트 -->
-            <div class="row">
-                <div class="col s12 l8">
+        <!-- 탭 컨텐츠 -->
+        <div class="tab-content-container">
+            <!-- 대시보드 탭 -->
+            <div id="tab-dashboard" class="tab-pane active">
+                <div class="grid-2">
                     <div class="chart-card">
                         <div class="card-title">
                             <i class="material-icons">timeline</i>
                             실시간 전력 모니터링
                         </div>
-                        <canvas id="powerChart"></canvas>
+                        <canvas id="powerChart" height="80"></canvas>
                     </div>
-                </div>
-                <div class="col s12 l4">
                     <div class="chart-card">
                         <div class="card-title">
                             <i class="material-icons">pie_chart</i>
                             장치별 전력 분포
                         </div>
-                        <canvas id="pieChart"></canvas>
+                        <canvas id="pieChart" height="80"></canvas>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 차트 탭 -->
-        <div id="charts" class="col s12">
-            <div class="row">
-                <div class="col s12 l6">
+            <!-- 차트 탭 -->
+            <div id="tab-charts" class="tab-pane">
+                <div class="grid-2-equal" style="margin-bottom: 12px;">
                     <div class="chart-card">
                         <div class="card-title">
                             <i class="material-icons">bar_chart</i>
                             장치별 전력량
                         </div>
-                        <canvas id="barChart"></canvas>
+                        <canvas id="barChart" height="50"></canvas>
                     </div>
-                </div>
-                <div class="col s12 l6">
                     <div class="chart-card">
                         <div class="card-title">
                             <i class="material-icons">thermostat</i>
                             온도 모니터링
                         </div>
-                        <canvas id="temperatureChart"></canvas>
+                        <canvas id="temperatureChart" height="50"></canvas>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col s12">
-                    <div class="chart-card">
-                        <div class="card-title">
-                            <i class="material-icons">show_chart</i>
-                            구동시간 추이
-                        </div>
-                        <canvas id="runtimeChart"></canvas>
+
+            <!-- 슬레이브 관리 탭 -->
+            <div id="tab-slaves" class="tab-pane">
+                <div class="slave-table-card">
+                    <div class="card-title">
+                        <i class="material-icons">devices_other</i>
+                        슬레이브 노드 현황
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="highlight responsive-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>장치 타입</th>
+                                    <th>발전량</th>
+                                    <th>외기온도</th>
+                                    <th>내부온도</th>
+                                    <th>구동시간</th>
+                                    <th>상태</th>
+                                    <th>작업</th>
+                                </tr>
+                            </thead>
+                            <tbody id="slavesTableBody">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 40px !important;">
+                                        <div class="progress"><div class="indeterminate"></div></div>
+                                        <p style="margin-top: 10px;">슬레이브 데이터를 기다리는 중...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 슬레이브 관리 탭 -->
-        <div id="slaves" class="col s12">
-            <div class="slave-table-card">
-                <div class="card-title" style="font-size: 20px; font-weight: 500; color: #424242; margin-bottom: 20px;">
-                    <i class="material-icons" style="vertical-align: middle;">devices_other</i>
-                    슬레이브 노드 현황
-                </div>
-                <table class="highlight responsive-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>장치 타입</th>
-                            <th>발전량</th>
-                            <th>외기온도</th>
-                            <th>내부온도</th>
-                            <th>구동시간</th>
-                            <th>상태</th>
-                            <th>작업</th>
-                        </tr>
-                    </thead>
-                    <tbody id="slavesTableBody">
-                        <tr>
-                            <td colspan="8" class="center-align">
-                                <div class="progress">
-                                    <div class="indeterminate"></div>
-                                </div>
-                                <p>슬레이브 데이터를 기다리는 중...</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- 분석 탭 -->
-        <div id="analytics" class="col s12">
-            <div class="row">
-                <div class="col s12 l6">
+            <!-- 분석 탭 -->
+            <div id="tab-analytics" class="tab-pane">
+                <div class="grid-2-equal">
                     <div class="chart-card">
                         <div class="card-title">
                             <i class="material-icons">radar</i>
                             성능 레이더 차트
                         </div>
-                        <canvas id="radarChart"></canvas>
+                        <canvas id="radarChart" height="80"></canvas>
                     </div>
-                </div>
-                <div class="col s12 l6">
                     <div class="chart-card">
                         <div class="card-title">
                             <i class="material-icons">bubble_chart</i>
                             효율성 분석
                         </div>
-                        <canvas id="bubbleChart"></canvas>
+                        <canvas id="bubbleChart" height="80"></canvas>
                     </div>
                 </div>
             </div>
@@ -476,16 +616,38 @@
                     <label for="admin-password">비밀번호</label>
                 </div>
             </div>
-            <div id="slave-controls">
-                <!-- 슬레이브 제어 항목이 동적으로 추가됩니다 -->
-            </div>
+            <div id="slave-controls"></div>
         </div>
         <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">닫기</a>
+            <a href="#!" class="modal-close waves-effect btn-flat">닫기</a>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- 비밀번호 변경 모달 -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <h4><i class="material-icons left">vpn_key</i>관리자 비밀번호 변경</h4>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="current-password" type="password" class="validate">
+                    <label for="current-password">현재 비밀번호</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="new-password" type="password" class="validate">
+                    <label for="new-password">새 비밀번호</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="confirm-password" type="password" class="validate">
+                    <label for="confirm-password">새 비밀번호 확인</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect btn-flat">취소</a>
+            <a href="#!" class="waves-effect btn" onclick="changePassword()">변경</a>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="/app.js"></script>

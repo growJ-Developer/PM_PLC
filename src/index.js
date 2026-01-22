@@ -19,6 +19,7 @@ const NODE_MODE = process.env.NODE_MODE || 'master';
 const PORT = process.env.PORT || 3000;
 
 let node;
+let adminPassword = 'admin123'; // 관리자 비밀번호 (메모리 저장)
 
 // WebSocket 연결 관리
 const clients = new Set();
@@ -65,7 +66,7 @@ app.post('/api/slave/toggle', (req, res) => {
   const { slaveId, enable, password } = req.body;
   
   // 비밀번호 확인
-  if (password !== 'admin123') {
+  if (password !== adminPassword) {
     return res.json({ success: false, error: '비밀번호가 올바르지 않습니다.' });
   }
   
@@ -79,6 +80,27 @@ app.post('/api/slave/toggle', (req, res) => {
   } catch (error) {
     res.json({ success: false, error: error.message });
   }
+});
+
+// 관리자 비밀번호 변경 API
+app.post('/api/admin/change-password', (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  
+  // 현재 비밀번호 확인
+  if (currentPassword !== adminPassword) {
+    return res.json({ success: false, error: '현재 비밀번호가 올바르지 않습니다.' });
+  }
+  
+  // 새 비밀번호 검증
+  if (!newPassword || newPassword.length < 4) {
+    return res.json({ success: false, error: '비밀번호는 최소 4자 이상이어야 합니다.' });
+  }
+  
+  // 비밀번호 변경
+  adminPassword = newPassword;
+  console.log('[Admin] 비밀번호가 변경되었습니다.');
+  
+  res.json({ success: true, message: '비밀번호가 변경되었습니다.' });
 });
 
 // 노드 시작
