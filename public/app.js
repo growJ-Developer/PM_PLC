@@ -110,7 +110,6 @@ function updateUI(data) {
     updateStatistics(statistics);
     updateSlavesTable(slaves);
     updateAllCharts(slaves, statistics);
-    updateAdminPanel(slaves);
 }
 
 // 통계 업데이트
