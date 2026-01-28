@@ -29,6 +29,7 @@ services:
       - MASTER_HOST=master
       - MASTER_PORT=5020
       - SLAVE_ID=1
+      - PORT=3001
       - DEVICE_TYPE=solar
       - UPDATE_INTERVAL=3000
     ports:
@@ -50,6 +51,7 @@ services:
       - MASTER_HOST=master
       - MASTER_PORT=5020
       - SLAVE_ID=2
+      - PORT=3002
       - DEVICE_TYPE=wind
       - UPDATE_INTERVAL=3000
     ports:
@@ -71,6 +73,7 @@ services:
       - MASTER_HOST=master
       - MASTER_PORT=5020
       - SLAVE_ID=3
+      - PORT=3003
       - DEVICE_TYPE=bms
       - UPDATE_INTERVAL=3000
     ports:

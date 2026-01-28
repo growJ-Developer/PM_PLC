@@ -9,12 +9,17 @@ RUN npm install --production
 # 소스 코드 복사
 COPY src ./src
 COPY public/slave ./public/slave
+COPY public/assets ./public/assets
 
 # Slave 환경변수 기본값 (docker-compose에서 오버라이드)
 ENV NODE_MODE=slave
 ENV MASTER_HOST=master
 ENV MASTER_PORT=5020
 ENV UPDATE_INTERVAL=3000
+ENV PORT=3001
+
+# 포트 노출 (동적으로 변경 가능)
+EXPOSE 3001
 
 # 애플리케이션 실행
 CMD ["node", "src/index.js"]
