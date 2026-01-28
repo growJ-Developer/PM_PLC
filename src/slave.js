@@ -35,6 +35,9 @@ class SlaveNode {
   }
 
   setupWebServer() {
+    // assets 디렉토리를 먼저 서빙 (우선순위 높음)
+    this.app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
+    // Slave 전용 파일 서빙
     this.app.use(express.static(path.join(__dirname, '../public/slave')));
     this.app.use(express.json());
     
