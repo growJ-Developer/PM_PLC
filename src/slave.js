@@ -35,11 +35,30 @@ class SlaveNode {
   }
 
   setupWebServer() {
-    // assets 디렉토리를 먼저 서빙 (우선순위 높음)
-    this.app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
-    // Slave 전용 파일 서빙
-    this.app.use(express.static(path.join(__dirname, '../public/slave')));
+    // assets 디렉토리를 먼저 서빙 (우선순위 높음) - 절대 경로 사용
+    const fs = require('fs');
+    const assetsPath = path.resolve(__dirname, '../public/assets');
+    const slavePath = path.resolve(__dirname, '../public/slave');
+    
+    console.log(`[Slave ${this.slaveId}] __dirname: ${__dirname}`);
+    console.log(`[Slave ${this.slaveId}] Assets path: ${assetsPath}`);
+    console.log(`[Slave ${this.slaveId}] Assets exists: ${fs.existsSync(assetsPath)}`);
+    console.log(`[Slave ${this.slaveId}] Slave path: ${slavePath}`);
+    console.log(`[Slave ${this.slaveId}] Slave exists: ${fs.existsSync(slavePath)}`);
+    
+    // JSON 파싱 미들웨어 (먼저 등록)
     this.app.use(express.json());
+    
+    // Assets 디렉토리 서빙 (최우선 - setHeaders로 CORS/캐싱 설정)
+    this.app.use('/assets', express.static(assetsPath, {
+      setHeaders: (res, filePath) => {
+        res.set('Access-Control-Allow-Origin', '*');
+        res.set('Cache-Control', 'public, max-age=31536000');
+      }
+    }));
+    
+    // Slave 전용 파일 서빙 (나중에 등록하여 /assets 우선순위 보장)
+    this.app.use(express.static(slavePath));
     
     // API 엔드포인트 - 상태 조회
     this.app.get('/api/status', (req, res) => {
@@ -258,3 +277,25 @@ class SlaveNode {
 }
 
 module.exports = SlaveNode;
+
+// 메인 실행 코드
+if (require.main === module) {
+  const slave = new SlaveNode();
+  slave.start().catch(error => {
+    console.error('Slave 시작 실패:', error);
+    process.exit(1);
+  });
+  
+  // 종료 시그널 처리
+  process.on('SIGINT', async () => {
+    console.log('\n[Slave] 종료 중...');
+    await slave.stop();
+    process.exit(0);
+  });
+  
+  process.on('SIGTERM', async () => {
+    console.log('\n[Slave] 종료 중...');
+    await slave.stop();
+    process.exit(0);
+  });
+}
